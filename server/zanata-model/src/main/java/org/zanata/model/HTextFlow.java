@@ -20,6 +20,8 @@
  */
 package org.zanata.model;
 
+import static org.zanata.util.ZanataUtil.equal;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +38,8 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-
 import org.hibernate.annotations.AccessType;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
@@ -193,12 +195,15 @@ public class HTextFlow implements Serializable, ITextFlowHistory, HasSimpleComme
 
    public void setDocument(HDocument document)
    {
-      this.document = document;
-      updateWordCount();
+      if (!equal(this.document, document))
+      {
+         this.document = document;
+         updateWordCount();
+      }
    }
 
    // TODO use orphanRemoval=true: requires JPA 2.0
-   @OneToOne(optional = true, cascade = CascadeType.ALL)
+   @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
    @JoinColumn(name = "comment_id")
    public HSimpleComment getComment()
@@ -223,8 +228,11 @@ public class HTextFlow implements Serializable, ITextFlowHistory, HasSimpleComme
 
    public void setContent(String content)
    {
-      this.content = content;
-      updateWordCount();
+      if (!equal(this.content, content))
+      {
+         this.content = content;
+         updateWordCount();
+      }
    }
 
    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "textFlow")
@@ -241,6 +249,7 @@ public class HTextFlow implements Serializable, ITextFlowHistory, HasSimpleComme
 
    @OneToMany(cascade = CascadeType.ALL, mappedBy = "textFlow")
    @MapKey(name = "locale")
+   @BatchSize(size = 10)
    public Map<HLocale, HTextFlowTarget> getTargets()
    {
       if (targets == null)
