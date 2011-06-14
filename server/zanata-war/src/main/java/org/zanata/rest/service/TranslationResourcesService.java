@@ -818,7 +818,7 @@ public class TranslationResourcesService implements TranslationResourcesResource
             }
             current = null;
          }
-         else
+         else if (mergeType == MergeType.IMPORT)
          {
             HTextFlowTarget hTarget = textFlow.getTargets().get(hLocale);
             if (hTarget != null)
