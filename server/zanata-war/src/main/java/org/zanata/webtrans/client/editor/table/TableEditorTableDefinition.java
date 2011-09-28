@@ -262,27 +262,27 @@ public class TableEditorTableDefinition extends DefaultTableDefinition<TransUnit
       EditRowCallback transValueCallBack = new EditRowCallback()
       {
          @Override
-         public void gotoNextRow(int row)
+         public void gotoNextRow()
          {
-            tableModel.gotoNextRow(row);
+            tableModel.gotoNextRow();
          }
 
          @Override
-         public void gotoPrevRow(int row)
+         public void gotoPrevRow()
          {
-            tableModel.gotoPrevRow(row);
+            tableModel.gotoPrevRow();
          }
 
          @Override
-         public void gotoNextFuzzy(int row)
+         public void gotoNextFuzzy()
          {
-            tableModel.gotoNextFuzzy(row);
+            tableModel.gotoNextFuzzy();
          }
 
          @Override
-         public void gotoPrevFuzzy(int row)
+         public void gotoPrevFuzzy()
          {
-            tableModel.gotoPrevFuzzy(row);
+            tableModel.gotoPrevFuzzy();
          }
       };
       

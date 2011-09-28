@@ -324,11 +324,11 @@ public class InlineTargetCellEditor implements CellEditor<TransUnit>
    {
       if (nav == NavigationType.NextEntry)
       {
-         editRowCallback.gotoNextRow(curRow);
+         editRowCallback.gotoNextRow();
       }
       else if (nav == NavigationType.PrevEntry)
       {
-         editRowCallback.gotoPrevRow(curRow);
+         editRowCallback.gotoPrevRow();
       }
    }
 
@@ -336,11 +336,11 @@ public class InlineTargetCellEditor implements CellEditor<TransUnit>
    {
       if (nav == NavigationType.NextEntry)
       {
-         editRowCallback.gotoNextFuzzy(curRow);
+         editRowCallback.gotoNextFuzzy();
       }
       else if (nav == NavigationType.PrevEntry)
       {
-         editRowCallback.gotoPrevFuzzy(curRow);
+         editRowCallback.gotoPrevFuzzy();
       }
    }
 

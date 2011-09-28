@@ -116,6 +116,12 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 
       int getCurrentPageNumber();
 
+      /**
+       * @return The index of the 'selected' row on the currently displayed
+       *         page, or 0 if no row is selected
+       */
+      int getSelectedRowIndex();
+
       TransUnit getTransUnitValue(int row);
 
       InlineTargetCellEditor getTargetCellEditor();
@@ -143,10 +149,27 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
    private final Identity identity;
    private TransUnit selectedTransUnit;
    // private int lastRowNum;
+
+   /**
+    * absolute positions in document
+    */
    private List<Long> transIdNextFuzzyCache = new ArrayList<Long>();
+
+   /**
+    * absolute positions in document
+    */
    private List<Long> transIdPrevFuzzyCache = new ArrayList<Long>();
 
+   /**
+    * the absolute row in the document. May not be the 'selected' row, call
+    * updatePageAndRow() to make it the selected row.
+    */
    private int curRowIndex;
+
+   /**
+    * the current page of the document. Call updatePageAndRow() to synchronize
+    * with the view table.
+    */
    private int curPage;
 
    private String findMessage;
@@ -617,46 +640,40 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
       }
 
       @Override
-      public void gotoNextRow(int row)
+      public void gotoNextRow()
       {
-         curPage = display.getCurrentPage();
-         curRowIndex = curPage * TableConstants.PAGE_SIZE + row;
-         int rowIndex = curPage * TableConstants.PAGE_SIZE + row + 1;
-         if (rowIndex < display.getTableModel().getRowCount())
+         updatePageAndRow();
+         int newRowIndex = curRowIndex + 1;
+         if (newRowIndex < display.getTableModel().getRowCount())
          {
-            gotoRow(rowIndex);
+            gotoRow(newRowIndex);
          }
       }
 
       @Override
-      public void gotoPrevRow(int row)
+      public void gotoPrevRow()
       {
-         curPage = display.getCurrentPage();
-         curRowIndex = curPage * TableConstants.PAGE_SIZE + row;
-         int rowIndex = curPage * TableConstants.PAGE_SIZE + row - 1;
-         if (rowIndex >= 0)
+         updatePageAndRow();
+         int newRowIndex = curRowIndex - 1;
+         if (newRowIndex >= 0)
          {
-            gotoRow(rowIndex);
+            gotoRow(newRowIndex);
          }
       }
 
       @Override
-      public void nextFuzzyIndex(int row)
+      public void nextFuzzyIndex()
       {
-         // Convert row number to row Index in table
-         curPage = display.getCurrentPage();
-         curRowIndex = curPage * TableConstants.PAGE_SIZE + row;
+         updatePageAndRow();
          Log.info("Current Row Index" + curRowIndex);
          if (curRowIndex < display.getTableModel().getRowCount())
             gotoNextState();
       }
 
       @Override
-      public void prevFuzzyIndex(int row)
+      public void prevFuzzyIndex()
       {
-         // Convert row number to row Index in table
-         curPage = display.getCurrentPage();
-         curRowIndex = curPage * TableConstants.PAGE_SIZE + row;
+         updatePageAndRow();
          Log.info("Current Row Index" + curRowIndex);
          if (curRowIndex > 0)
             gotoPrevState();
@@ -682,6 +699,17 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
          }
       }
    };
+
+   /**
+    * Updates page and row parameters from display.
+    * 
+    * curRowIndex and curPage will be up-to-date after this call
+    */
+   private void updatePageAndRow()
+   {
+      curPage = display.getCurrentPage();
+      curRowIndex = curPage * TableConstants.PAGE_SIZE + display.getSelectedRowIndex();
+   }
 
    private void stopEditing(TransUnit rowValue)
    {
@@ -717,6 +745,7 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
             isReqComplete = true;
             if (!result.getUnits().isEmpty())
             {
+               updatePageAndRow();
                for (Long offset : result.getUnits())
                {
                   transIdNextFuzzyCache.add(offset + curRowIndex);
@@ -744,6 +773,7 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
             isReqComplete = true;
             if (!result.getUnits().isEmpty())
             {
+               updatePageAndRow();
                for (Long offset : result.getUnits())
                {
                   transIdPrevFuzzyCache.add(curRowIndex - offset);
@@ -763,6 +793,9 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
    private void gotoPrevState()
    {
       Log.info("Previous FuzzyOrUntranslated State");
+
+      // make sure curRowIndex is up-to-date.
+      updatePageAndRow();
 
       // Clean the cache for Next Fuzzy to avoid issues about cache is
       // obsolete
@@ -818,6 +851,9 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
    private void gotoNextState()
    {
       Log.info("go to Next FuzzyOrUntranslated State");
+
+      // make sure curRowIndex is up-to-date.
+      updatePageAndRow();
 
       transIdPrevFuzzyCache.clear();
       // If the cache of next fuzzy is empty, generate one
