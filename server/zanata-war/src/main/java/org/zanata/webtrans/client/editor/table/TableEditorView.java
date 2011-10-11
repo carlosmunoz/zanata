@@ -108,7 +108,7 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements Tab
    }
 
    @Override
-   public List<TransUnit> getRowValues()
+   public List<TransUnit> getVisibleRowValues()
    {
       return super.getRowValues();
    }
@@ -202,21 +202,21 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements Tab
    }
 
    @Override
-   public void gotoRow(int row)
+   public void gotoRow(int relRow)
    {
-      getDataTable().selectRow(row, true);
-      editCell(row, TableEditorTableDefinition.TARGET_COL);
+      getDataTable().selectRow(relRow, true);
+      editCell(relRow, TableEditorTableDefinition.TARGET_COL);
    }
 
-   // Go to row location of the current page.
-   public void gotoRow(int row, boolean andEdit)
+   public void gotoRow(int relRow, boolean andEdit)
    {
+      getDataTable().selectRow(relRow, true);
       if (andEdit)
-         editCell(row, TableEditorTableDefinition.TARGET_COL);
+         editCell(relRow, TableEditorTableDefinition.TARGET_COL);
       else
       {
-         if (row < getDataTable().getRowCount())
-            DOM.scrollIntoView(getDataTable().getWidget(row, TableEditorTableDefinition.TARGET_COL).getElement());
+         if (relRow < getDataTable().getRowCount())
+            DOM.scrollIntoView(getDataTable().getWidget(relRow, TableEditorTableDefinition.TARGET_COL).getElement());
       }
    }
 
@@ -226,13 +226,15 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements Tab
       return getCurrentPage();
    }
 
-   @Override
-   public int getSelectedRowIndex()
+   /**
+    * @return selected row index relative to current page
+    */
+   private int getRelSelectedRowIndex()
    {
       Set<Integer> selectedRows = super.getDataTable().getSelectedRows();
       if (selectedRows.isEmpty())
       {
-         return 0;
+         return -1;
       }
       else
       {
@@ -241,9 +243,23 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements Tab
    }
 
    @Override
-   public TransUnit getTransUnitValue(int row)
+   public int getSelectedRowIndex()
    {
-      return getRowValue(row);
+      int relRow = getRelSelectedRowIndex();
+      if (relRow >= 0)
+      {
+         return getCurrentPageNumber() * getPageSize() + getRelSelectedRowIndex();
+      }
+      else
+      {
+         return -1;
+      }
+   }
+
+   @Override
+   public TransUnit getTransUnitValue(int relRowIndex)
+   {
+      return getRowValue(relRowIndex);
    }
 
    @Override
