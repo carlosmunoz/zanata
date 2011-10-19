@@ -90,10 +90,9 @@ public class CopyTransServiceImpl implements CopyTransService
       log.info("copyTrans finished: document \"{0}\"", document.getDocId());
    }
 
-   private String createComment(HTextFlowTarget target)
+   private String createComment(HTextFlowTarget target, HDocument document)
    {
       String authorname;
-      HDocument document = target.getTextFlow().getDocument();
       String projectname = document.getProjectIteration().getProject().getName();
       String version = document.getProjectIteration().getSlug();
       String documentid = document.getDocId();
@@ -105,8 +104,7 @@ public class CopyTransServiceImpl implements CopyTransService
       {
          authorname = "";
       }
-
-      return "translation auto-copied from project " + projectname + ", version " + version + ", document " + documentid + ", author " + authorname;
+      return String.format("translation auto-copied from project {0}, version {1}, document {2}, author {3}", projectname, version, documentid, authorname);
    }
 
    // TODO unit testing for this method
@@ -149,7 +147,7 @@ public class CopyTransServiceImpl implements CopyTransService
                   hcomment = new HSimpleComment();
                   hTarget.setComment(hcomment);
                }
-               hcomment.setComment(createComment(oldTFT));
+               hcomment.setComment(createComment(oldTFT, document));
                textFlowTargetDAO.makePersistent(hTarget);
                ++copyCount;
             }
