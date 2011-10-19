@@ -148,7 +148,7 @@ public class HTextFlowTarget extends ModelEntityBase implements ITextFlowTargetH
    }
 
    @NaturalId
-   @ManyToOne
+   @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "tf_id")
    @IndexedEmbedded(depth = 2)
    public HTextFlow getTextFlow()
