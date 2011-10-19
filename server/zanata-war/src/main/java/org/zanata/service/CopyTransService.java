@@ -36,5 +36,5 @@ public interface CopyTransService
     * @param document the document to copy translations into
     * @param locale the locale of translations to copy
     */
-   void copyTransForLocale(HDocument document, HLocale locale);
+   void copyTransForLocale(HDocument document, HLocale locale, String projectName, String versionSlug);
 }

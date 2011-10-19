@@ -81,21 +81,23 @@ public class CopyTransServiceImpl implements CopyTransService
    {
       HDocument document = documentDAO.findById(docId, true);
       log.info("copyTrans start: document \"{0}\"", document.getDocId());
+      String projectName = document.getProjectIteration().getProject().getName();
       List<HLocale> localelist = localeServiceImpl.getSupportedLangugeByProjectIteration(project, iterationSlug);
 
       for (HLocale locale : localelist)
       {
-         copyTransForLocale(document, locale);
+         copyTransForLocale(document, locale, projectName, iterationSlug);
       }
       log.info("copyTrans finished: document \"{0}\"", document.getDocId());
    }
 
-   private String createComment(HTextFlowTarget target, HDocument document)
+   private String createComment(HTextFlowTarget target, String projectname, String version, String documentid)
    {
       String authorname;
-      String projectname = document.getProjectIteration().getProject().getName();
-      String version = document.getProjectIteration().getSlug();
-      String documentid = document.getDocId();
+      // String projectname =
+      // document.getProjectIteration().getProject().getName();
+      // String version = document.getProjectIteration().getSlug();
+      // String documentid = document.getDocId();
       if (target.getLastModifiedBy() != null)
       {
          authorname = target.getLastModifiedBy().getName();
@@ -109,7 +111,7 @@ public class CopyTransServiceImpl implements CopyTransService
 
    // TODO unit testing for this method
    @Override
-   public void copyTransForLocale(HDocument document, HLocale locale)
+   public void copyTransForLocale(HDocument document, HLocale locale, String projectname, String version)
    {
       try
       {
@@ -147,7 +149,7 @@ public class CopyTransServiceImpl implements CopyTransService
                   hcomment = new HSimpleComment();
                   hTarget.setComment(hcomment);
                }
-               hcomment.setComment(createComment(oldTFT, document));
+               hcomment.setComment(createComment(oldTFT, projectname, version, document.getDocId()));
                textFlowTargetDAO.makePersistent(hTarget);
                ++copyCount;
             }
