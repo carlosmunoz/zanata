@@ -96,5 +96,30 @@ public class TextFlowTargetDAO extends AbstractDAOImpl<HTextFlowTarget, Long>
       // @formatter:on
    }
    
+   /**
+    * Get the most recent approved translation from a list of candidate
+    * HTextFlows.
+    * 
+    * @param candidateFlowIds ids for the HTextFlows to check for approved
+    *           translations
+    * @param locale check for translations for this locale
+    * @return a {@link HTextFlowTarget} representing the most recent approved
+    *         translation, null if there are no approved translations.
+    */
+   public HTextFlowTarget findLatestApprovedTranslationInCandidateFlows(List<Long> candidateFlowIds, HLocale locale)
+   {
+      // @formatter:off
+      return (HTextFlowTarget) getSession().createQuery(
+            "select t from HTextFlowTarget t " +
+            "where t.locale = :locale " +
+            "and t.state = :state " +
+            "and t.textFlow.id in (:flowids) " +
+            "order by t.lastChanged desc")
+               .setParameter("locale", locale)
+               .setParameter("state", ContentState.Approved)
+               .setParameterList("flowids", candidateFlowIds)
+               .setMaxResults(1).uniqueResult();
+      // @formatter:on
+   }
 
 }

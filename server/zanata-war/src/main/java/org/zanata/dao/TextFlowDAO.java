@@ -105,6 +105,32 @@ public class TextFlowDAO extends AbstractDAOImpl<HTextFlow, Long>
       return q.list();
    }
 
+   /**
+    * Returns a list of matching {@link HTextFlow} ids.
+    * 
+    * A HTextFlow is considered matching if it is in a document with the same
+    * id, has the same resource id, and has the same content.
+    * 
+    * @param flowToMatch the {@link HTextFlow} to match other flows against
+    * @return the ids of matching HTextFlows
+    */
+   @SuppressWarnings("unchecked")
+   public List<Long> getIdsByMatchingContent(HTextFlow flowToMatch)
+   {
+      // TODO use hibernate search for this
+      // @formatter:off
+      return getSession().createQuery(
+            "select tf.id from HTextFlow tf " +
+            "where tf.resId=:resid " +
+            "and tf.document.docId=:docId " +
+            "and tf.content=:content")
+               .setParameter("resid", flowToMatch.getResId())
+               .setParameter("docId", flowToMatch.getDocument().getDocId())
+               .setParameter("content", flowToMatch.getContent())
+               .list();
+      // @formatter:on
+   }
+
    @SuppressWarnings("unchecked")
    public List<HTextFlow> getNavigationByDocumentId(Long documentId, int offset, boolean reverse)
    {
