@@ -1,5 +1,6 @@
 package org.zanata.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -72,7 +73,7 @@ public class TextFlowTargetDAO extends AbstractDAOImpl<HTextFlowTarget, Long>
             .setParameter("document", document)
             .setParameter("localeId", localeId)
             .setParameter("state", ContentState.New)
-            .list();      
+            .list();
       // @formatter:on
    }
    
@@ -120,6 +121,43 @@ public class TextFlowTargetDAO extends AbstractDAOImpl<HTextFlowTarget, Long>
                .setParameterList("flowids", candidateFlowIds)
                .setMaxResults(1).uniqueResult();
       // @formatter:on
+   }
+
+   /**
+    * Filter a list of locales to give only locales for which there are approved
+    * translations for the given document.
+    * 
+    * @param docId
+    * @param candidateLocales
+    * @return a subset of candidateLocales for which there are 1 or more
+    *         approved translations of strings in the given document
+    */
+   public List<HLocale> filterLocalesWithDocumentTranslations(String docId, List<HLocale> candidateLocales)
+   {
+      List<HLocale> filteredLocales = new ArrayList<HLocale>(candidateLocales.size());
+      for (HLocale loc : candidateLocales)
+      {
+         //@formatter:off
+         Long count = (Long) getSession().createQuery(
+               "select count(*) from HTextFlowTarget tft " +
+               "where tft.locale=:locale " +
+               "and tft.state=:state " +
+               "and tft.textFlow.document.docId=:docId " +
+               "group by tft.locale")
+                  .setParameter("locale", loc)
+                  .setParameter("state", ContentState.Approved)
+                  .setParameter("docId", docId)
+                  .uniqueResult();
+         //@formatter:on
+         if (count != null && count > 0) // may not need the && count > 0, if
+                                         // empty set is always returned for
+                                         // locales with not approved
+                                         // translations.
+         {
+            filteredLocales.add(loc);
+         }
+      }
+      return filteredLocales;
    }
 
 }

@@ -91,18 +91,22 @@ public class CopyTransServiceImpl implements CopyTransService
       log.info("copyTrans start: document \"{0}\"", document.getDocId());
       String projectName = document.getProjectIteration().getProject().getName();
       List<HLocale> localelist = localeServiceImpl.getSupportedLangugeByProjectIteration(project, iterationSlug);
+      log.info("found {0} candidate locales for project \"{1}\"", localelist.size(), projectName);
+      // eliminate locales that have no translations for this document
+      localelist = textFlowTargetDAO.filterLocalesWithDocumentTranslations(document.getDocId(), localelist);
+      log.info("have {0} candidate locales for document \"{1}\" after filtering for available translations", localelist.size(), document.getDocId());
       int copyCount = 0;
       try
       {
          Transaction.instance().begin();
          for (HTextFlow textFlow : document.getTextFlows())
          {
-            copyTransForTextFlow(textFlow, localelist, document.getDocId(), iterationSlug, projectName);
+            copyCount += copyTransForTextFlow(textFlow, localelist, document.getDocId(), iterationSlug, projectName);
          }
          textFlowTargetDAO.flush();
          Transaction.instance().commit();
 
-         log.info("copyTrans: {0} translations for document \"{2}{3}\" ", copyCount, document.getPath(), document.getName());
+         log.info("copyTrans: {0} translations for document \"{1}{2}\" ", copyCount, document.getPath(), document.getName());
       }
       catch (Exception e)
       {
