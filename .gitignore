@@ -1,11 +1,9 @@
-# NB be careful ignoring anything under src/ (especially directories or .jar files)
-# because ignoring files under these directories can make it
-# difficult to debug build problems.  At the very least, we should ensure
-# 'mvn clean' will clean such directories.
-
 
 *~
 *.patch
+# Include patches used for the publick package
+!/zanata-war/etc/public-package/patches/**/*.patch
+
 *.sedbak
 zanatasearchindex/
 test-output/
@@ -33,6 +31,7 @@ bin/
 # eclipse scrapbook page:
 *.jpage
 
+*.pdf
 
 # idea
 *.idea/
@@ -44,11 +43,33 @@ bin/
 #gwt related
 .gwt-log
 *.gwt-tmp
-/server/zanata-war/src/main/webapp/WEB-INF/deploy/
-/server/zanata-war/src/main/webapp/webtrans/
+/zanata-war/src/main/webapp/WEB-INF/deploy/
+/zanata-war/src/main/webapp/webtrans/
 
 # vim
 *.swp
 
+
+# binary files
+*.class
+*.cli
+*.exe
+*.jar
+*.war
+*.zip
+
+# temp files
 *.log
+*.temp
+*.tmp
 /tmp*
+*.bak
+
+# Gradle files
+.gradle/
+
+# other things that really ought to go under target/
+ehcache.disk.store.dir/
+frontend/src/main/web/jsconfig.json
+frontend/src/main/web/.vscode/launch.json
+frontend/src/main/web/.vscode/tasks.json

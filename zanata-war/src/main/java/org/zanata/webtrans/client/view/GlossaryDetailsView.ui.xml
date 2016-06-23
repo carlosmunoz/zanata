@@ -1,0 +1,77 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui"
+  xmlns:f="urn:import:org.zanata.webtrans.client"
+  xmlns:fui="urn:import:org.zanata.webtrans.client.ui">
+
+  <ui:with field='resources'
+    type="org.zanata.webtrans.client.resources.Resources" />
+
+  <ui:style>
+    .textArea[readonly] {
+      background: lightgray;
+    }
+
+    .newTargetCommentTextArea {
+      width: 260px;
+      height: 40px;
+      resize: none;
+    }
+
+    .newTargetCommentTextArea[readonly] {
+      background: lightgray;
+    }
+
+    .container {
+      height: 30em;
+    }
+  </ui:style>
+
+  <g:HTMLPanel styleName="new-zanata">
+    <fui:DialogBoxCloseButton ui:field="dismissButton" />
+    <div class="l__wrapper {style.container} l--scroll-auto">
+      <span class="epsilon">Entries</span>
+      <g:ListBox ui:field='entryListBox' />
+
+      <div class="l--push-top-half">
+        <g:InlineLabel ui:field="srcRef" styleName="txt--understated"/>
+        <div>
+          <label class="epsilon">Part of speech</label>
+          <g:TextBox ui:field="pos"/>
+        </div>
+      </div>
+
+      <div class="g l--push-top-half">
+        <div class="g__item w--1-2">
+          <g:Label ui:field="sourceLabel" styleName="epsilon" />
+          <g:InlineLabel ui:field='sourceText'/>
+        </div>
+        <div class="g__item w--1-2">
+          <label class="epsilon">Description</label>
+          <g:TextArea ui:field='description'/>
+        </div>
+      </div>
+
+      <div class="g l--push-top-half">
+        <div class="g__item w--1-2">
+          <g:Label ui:field="targetLabel" styleName="epsilon" />
+          <g:TextArea ui:field='targetText'/>
+        </div>
+        <div class="g__item w--1-2">
+          <label class="epsilon">Target comment</label>
+          <g:TextArea ui:field="targetComment"
+            styleName="{style.newTargetCommentTextArea}" />
+        </div>
+      </div>
+
+      <div class="l--push-top-half txt--align-right">
+        <g:InlineLabel ui:field='lastModified' styleName="txt--understated" />
+
+        <g:HTMLPanel>
+          <g:Image ui:field="loadingIcon" />
+          <g:Button ui:field='saveButton' styleName="button--primary"/>
+        </g:HTMLPanel>
+      </div>
+    </div>
+  </g:HTMLPanel>
+</ui:UiBinder>

@@ -1,0 +1,59 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui"
+  xmlns:fui="urn:import:org.zanata.webtrans.client.ui">
+
+  <ui:with field="messages"
+    type="org.zanata.webtrans.client.resources.WebTransMessages" />
+
+  <ui:style field="style"
+    type="org.zanata.webtrans.client.ui.DiffColorLegendPanel.Styles">
+    .diffLegendPanel {
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 1em;
+      border-radius: 3px;
+    }
+  </ui:style>
+
+  <g:HTMLPanel styleName="new-zanata">
+    <div class="bg--neutral l--pad-all-quarter txt--understated">
+      <table>
+        <tr>
+          <th>
+            <ui:text from="{messages.style}" />
+          </th>
+          <th>
+            <ui:text from="{messages.description}" />
+          </th>
+        </tr>
+
+        <tr>
+          <td class="diff-insert">
+            <ui:text from="{messages.greenColor}" />
+          </td>
+          <td>
+            <g:Label ui:field="insDescription" />
+          </td>
+        </tr>
+
+        <tr>
+          <td class="diff-delete">
+            <ui:text from="{messages.redColorCrossedOut}" />
+          </td>
+          <td>
+            <g:Label ui:field="delDescription" />
+          </td>
+        </tr>
+
+        <tr>
+          <td class="diff-equal">
+            <ui:text from="{messages.plainText}" />
+          </td>
+          <td>
+            <g:Label ui:field="containDescription" />
+          </td>
+        </tr>
+      </table>
+    </div>
+  </g:HTMLPanel>
+</ui:UiBinder>

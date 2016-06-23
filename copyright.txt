@@ -1,4 +1,4 @@
-Zanata is Copyright 2011 Red Hat, Inc. and individual contributors. It is 
+Zanata is Copyright 2013 Red Hat, Inc. and individual contributors. It is
 licensed under the GNU LGPL except where otherwise noted in the source file's
 header.
 
@@ -11,12 +11,14 @@ Asgeir Frimannsson                             Project Founder and former Lead
 James Ni <jni@redhat.com>                      Project Contributor
 Sean Flanigan <sflaniga@redhat.com>            Project Lead
 Ding-Yi Chen <dchen@redhat.com>                Project Contributor
-Caius Carlos Chance <cchance@redhat.com>       Project Contributor
-Helen Ding <hding@redhat.com>                  Project Contributor
+Caius Carlos Chance                            Project Contributor
+Helen Ding                                     Project Contributor
 Alex Eng <aeng@redhat.com>                     Project Contributor
 David Mason <damason@redhat.com>               Project Contributor
 Carlos Munoz <camunoz@redhat.com>              Project Contributor
-
+Patrick Huang <pahuang@redhat.com>             Project Contributor
+Joyce Chang                                    Project Contributor
+Damian Jansen <djansen@redhat.com>             Project Contributor
 
 
 Libraries

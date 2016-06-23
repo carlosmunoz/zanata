@@ -1,0 +1,64 @@
+<f:view contentType="text/html" xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets">
+  <ui:fragment
+    rendered="#{not empty applicationConfiguration.piwikUrl and not empty applicationConfiguration.piwikIdSite}">
+    <!-- Piwik -->
+    <script type="text/javascript">
+      //<![CDATA[remove any trailing slash
+      function stripTrailingSlash(url) {
+        return url.replace(/\/$/, "");
+      }
+
+      //if url doesn't contain protocol, append to it
+      function checkProtocol(url) {
+        var protocol = "";
+
+        if ((url.indexOf("http") == -1) && (url.indexOf("https") == -1)) {
+          protocol =
+            (("https:" == document.location.protocol) ? "https://" : "http://");
+        }
+        return stripTrailingSlash(protocol + url);
+      }
+
+      var pkBaseURL = checkProtocol("#{applicationConfiguration.piwikUrl}") +
+        "/";
+
+      document.write(unescape("%3Cscript src='" + pkBaseURL +
+        "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+      //]]>
+    </script>
+    <script type="text/javascript">//<![CDATA[
+    try {
+      var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php",
+        #{applicationConfiguration.piwikIdSite});
+      var username = "#{identity.accountUsername}";
+      if (#{identity.loggedIn} == false
+    )
+      {
+        username = "anonymous";
+      }
+      piwikTracker.setCustomVariable(1, "Visit", username, "visit");
+      piwikTracker.setCustomVariable(2, "View page", username, "page");
+
+      piwikTracker.trackPageView();
+      piwikTracker.enableLinkTracking();
+    } catch (err) {
+    }
+    //]]>
+    </script>
+    <!-- End Piwik Code -->
+  </ui:fragment>
+
+  <ui:remove>
+  <!-- jQuery will be loaded automatically if there are RichFaces tags, but
+       we need jQuery on other pages. Also, jQuery needs to be loaded in head
+       so that we can use jQuery(document).ready(). -->
+  </ui:remove>
+  <h:outputScript library="org.richfaces" name="jquery.js" target="head"/>
+  <script type="text/javascript" src="#{assets['js/script.min.js']}"></script>
+  <h:outputScript library="script" name="components-script.js"/>
+  <h:outputScript library="script" name="signals.min.js"/>
+  <h:outputScript library="script" name="crossroads.min.js"/>
+</f:view>
